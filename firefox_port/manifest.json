@@ -1,0 +1,40 @@
+{
+  "name": "Testissimo",
+  "version": "0.3.0",
+  "manifest_version": 2,
+  "description": "Testissimo, automated e2e testing tool",
+  "homepage_url": "https://testissimo.io",
+  "default_locale": "en",
+  "icons": {
+    "16": "icons/icon16_standby.png",
+    "19": "icons/icon19_standby.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "page": "src/background-page.html"
+  },
+  "permissions": [
+    "tabs",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/inject.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "applications": {
+    "gecko": {
+      "id": "info@testissimo.io"
+    }
+  }
+}
