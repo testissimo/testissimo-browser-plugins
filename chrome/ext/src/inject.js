@@ -38,13 +38,14 @@ var agentSrc = endpointUrl + '/testissimo.min.js?agentMode=true&uiMessagingOrigi
 
 // pre inject testissimo - catch some original window methods to avoid replacement by other library before testissimo init
 injectScript("(function(w){"+
-				"window.testissimoPluginEnabled = true; "+
+				"w.testissimoPluginEnabled = true; "+
 				"if(w.testissimo_setTimeout)return;"+
 				"['setInterval','clearInterval','setTimeout','clearTimeout','requestAnimationFrame','cancelAnimationFrame','prompt','confirm','alert'].forEach(function(p){"+
 					"var pt='testissimo_'+p;w[pt]=w[p].bind(w);w[p]=function testissimoNative(){return w.testissimo?w.testissimo[p+'Getter']().apply(w,arguments):w[pt].apply(w,arguments);};"+
 				"});"+
-				"w.testissimo_XMLHttpRequestOpen=XMLHttpRequest.prototype.open;"+
-				"w.testissimo_XMLHttpRequestAbort=XMLHttpRequest.prototype.abort;"+
+				"[['XMLHttpRequest','open'],['XMLHttpRequest','open'],['History','pushState'],['History','replaceState']].forEach(function(p){"+
+					"w['testissimo_'+p[0]+'_'+p[1]]=w[p[0]].prototype[p[1]];"+
+				"});"+
 				"})(window);");
 
 
