@@ -17,10 +17,6 @@ var APP_URLS = [
 	'https://dev.testissimo.io:2000/https',
 ];
 
-var APP_URL_MATCHES = APP_URLS.map(function(url){
-	return url + (url.match(/\/$/) ? '*' : '/*');
-});
-
 var APP_CLIENT_SCRIPT = '/testissimo.min.js';
 
 // local state
@@ -71,12 +67,13 @@ browser.tabs.onUpdated.addListener(function(tabId, change){
 });
 
 function searchTestTabs(cb){
-	browser.tabs.query({ url: APP_URL_MATCHES } ,function(appTabs){
+	browser.tabs.query({}, function(appTabs){
 		state.reset();
 
 		for(var i=0;i<appTabs.length;i++) {
 			if(isAppUrl(appTabs[i].url)) state.setActive(appTabs[i].id);
 		}
+
 		if(cb) cb();
 	});
 }
@@ -85,12 +82,15 @@ function searchTestTabs(cb){
 setTimeout(searchTestTabs, 1000);
 
 // create or swith to app tab after install, and reload it
-browser.runtime.onInstalled.addListener(function(){
-	searchTestTabs(function(){
-		if(state.tabIds.length > 0) browser.tabs.update(state.tabIds[0], { active:true }, function(){
-			browser.tabs.reload(state.tabIds[0]);
+browser.runtime.onInstalled.addListener(function(detail){
+	if(detail.reason === 'installed') searchTestTabs(function(){
+		if(state.tabIds.length > 0) browser.tabs.get(state.tabIds[0], function(tab){
+			var url = tab.url.replace('demo=true', '');
+			browser.tabs.update(state.tabIds[0], { active:true, url:url }, function(){
+				browser.tabs.reload(state.tabIds[0]);
+			});
 		});
-		else browser.tabs.create({ active:true, url:APP_URLS[0] });
+		// else browser.tabs.create({ active:true, url:APP_URLS[0] });
 	});
 });
 
