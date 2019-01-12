@@ -21,6 +21,7 @@ var APP_CLIENT_SCRIPT = '/testissimo.min.js';
 
 // local state
 var state = {
+	firstInstallDate: localStorage.getItem('state:firstInstallDate'),
 	tabIds: (localStorage.getItem('state:tabIds') || '').split('|').map(function(id){ return parseInt(id); }),
 	active: !!localStorage.getItem('state:active'),
 	reset: function(){
@@ -81,17 +82,15 @@ function searchTestTabs(cb){
 // ensure url is not activation url when starting chrome with url, and may be not catched by background page
 setTimeout(searchTestTabs, 1000);
 
-// create or swith to app tab after install, and reload it
+// close all testissimo tabs and create new tab, if first install
 browser.runtime.onInstalled.addListener(function(detail){
-	if(detail.reason === 'installed') searchTestTabs(function(){
-		if(state.tabIds.length > 0) browser.tabs.get(state.tabIds[0], function(tab){
-			var url = tab.url.replace('demo=true', '');
-			browser.tabs.update(state.tabIds[0], { active:true, url:url }, function(){
-				browser.tabs.reload(state.tabIds[0]);
-			});
+	if(!state.firstInstallDate) searchTestTabs(function(){
+		browser.tabs.remove(state.tabIds, function(){
+			browser.tabs.create({ active:true, url:APP_URLS[0] });
 		});
-		// else browser.tabs.create({ active:true, url:APP_URLS[0] });
 	});
+
+	localStorage.setItem('state:firstInstallDate', new Date().toString());
 });
 
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
