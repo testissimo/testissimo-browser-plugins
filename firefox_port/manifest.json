@@ -1,6 +1,6 @@
 {
   "name": "Testissimo",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "manifest_version": 2,
   "description": "Testissimo, automated e2e testing tool",
   "homepage_url": "https://testissimo.io",

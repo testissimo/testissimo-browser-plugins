@@ -21,7 +21,6 @@ var APP_CLIENT_SCRIPT = '/testissimo.min.js';
 
 // local state
 var state = {
-	firstInstallDate: localStorage.getItem('state:firstInstallDate'),
 	tabIds: (localStorage.getItem('state:tabIds') || '').split('|').map(function(id){ return parseInt(id); }),
 	active: !!localStorage.getItem('state:active'),
 	reset: function(){
@@ -84,13 +83,11 @@ setTimeout(searchTestTabs, 1000);
 
 // close all testissimo tabs and create new tab, if first install
 browser.runtime.onInstalled.addListener(function(detail){
-	if(!state.firstInstallDate) searchTestTabs(function(){
+	if(detail.reason === 'install') searchTestTabs(function(){
 		browser.tabs.remove(state.tabIds, function(){
 			browser.tabs.create({ active:true, url:APP_URLS[0] });
 		});
 	});
-
-	localStorage.setItem('state:firstInstallDate', new Date().toString());
 });
 
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
