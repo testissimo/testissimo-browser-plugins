@@ -76,6 +76,15 @@ function setInactiveIcon(tabId){
     chrome.browserAction.setIcon({ tabId:tabId, path: ICONS_INACTIVE });
 }
 
+function checkActionIcon(tabId){
+    if(state.active && state.tabIds.indexOf(tabId) > -1) setActiveIcon(tabId);
+    else setInactiveIcon(tabId);
+}
+
+browser.tabs.onActivated.addListener(function(activeInfo){
+    checkActionIcon(activeInfo.tabId);
+});
+
 // auto turn off when closing tab
 browser.tabs.onRemoved.addListener(function (tabId) {
     if (state.active && state.tabIds.indexOf(tabId) > -1) state.setInactive(tabId);
@@ -83,6 +92,7 @@ browser.tabs.onRemoved.addListener(function (tabId) {
 
 // auto activate/deactivate on app url
 browser.tabs.onUpdated.addListener(function (tabId, change) {
+    checkActionIcon(tabId);
     if (!change.url) return;
     else if (isAppUrl(change.url)) state.setActive(tabId);
     else if (state.active && state.tabIds.indexOf(tabId) > -1) state.setInactive(tabId);
@@ -120,7 +130,8 @@ browser.runtime.onInstalled.addListener(function (detail) {
 // switch tab url into testissimo tested app url
 browser.browserAction.onClicked.addListener(function(tab){
     if (state.active && state.tabIds.indexOf(tab.id) > -1) return;
-    
+    if (!tab.url || (tab.url.indexOf('http://') !== 0 && tab.url.indexOf('https://') !== 0)) return; // only activate when http(s) proto
+
     // update tab url
     chrome.tabs.update(tab.id, { url:APP_URLS[0] + '?url=' + encodeURIComponent(tab.url) });
 });

@@ -42,10 +42,10 @@
         "if(w.testissimoPrePatched) return;" + // already pre-patched
         "w.testissimoPrePatched=true;" +
         "['setInterval','clearInterval','setTimeout','clearTimeout','requestAnimationFrame','cancelAnimationFrame','prompt','confirm','alert','fetch'].forEach(function(p){" +
-        "var pt='testissimo_'+p,pg=p+'Getter';w[pt]=w[p].bind(w);w[p]=function testissimoNative(){return (w.testissimo&&w.testissimo[pg])?w.testissimo[pg]().apply(this,arguments):w[pt].apply(this,arguments);};" +
+            "var pt='testissimo_'+p,pg=p+'Getter';w[pt]=w[p].bind(w);w[p]=function testissimoNative(){return (w.testissimo&&w.testissimo[pg])?w.testissimo[pg]().apply(this,arguments):w[pt].apply(this,arguments);};" +
         "});" +
-        "[['History','pushState'],['History','replaceState'],['XMLHttpRequest','open'],['XMLHttpRequest','abort'],['EventTarget','addEventListener'],['EventTarget','removeEventListener'],['Promise','catch'],['Promise','then'],['Promise','finally']].forEach(function(p){" +
-        "var n=p[0]+'_'+p[1],pg=n+'Getter';w['testissimo_'+n]=w[p[0]].prototype[p[1]];w[p[0]].prototype[p[1]]=function testissimoNative(){return (w.testissimo&&w.testissimo[pg])?w.testissimo[pg]().apply(this,arguments):w['testissimo_'+n].apply(this,arguments);};" +
+        "[['History','pushState'],['History','replaceState'],['XMLHttpRequest','open'],['XMLHttpRequest','abort'],['EventTarget','addEventListener',true],['EventTarget','removeEventListener',true],['Promise','constructor'],['Promise','catch'],['Promise','then'],['Promise','finally']].forEach(function(p){" +
+            "var tp='testissimo_',n=p[0]+'_'+p[1],pg=n+'Getter',pq=tp+p[0]+'_queue';w[pq]=p[2]?[]:null;w[tp+n]=w[p[0]].prototype[p[1]];w[p[0]].prototype[p[1]]=function testissimoNative(){if(w[pq]) w[pq].push({a:arguments,c:this,m:p[1]}); return (w.testissimo&&w.testissimo[pg])?w.testissimo[pg]().apply(this,arguments):w[tp+n].apply(this,arguments);};"+
         "});" +
         "})(window);");
 
@@ -74,7 +74,7 @@
                             cb(data);
                         });
                     } catch (err) {
-                        console.warn('Cannot get object key "' + key + '" from store "' + storeType + '":' + err);
+                        console.log('Cannot get object key "' + key + '" from store "' + storeType + '":' + err);
                     }
                 },
                 set: function (key, data, cb) {
@@ -88,7 +88,7 @@
                             if (cb) cb(data);
                         });
                     } catch (err) {
-                        console.warn('Cannot set object key "' + key + '" from store "' + storeType + '":' + err);
+                        console.log('Cannot set object key "' + key + '" from store "' + storeType + '":' + err);
                     }
                 },
                 update: function (key, data, cb) {
@@ -107,7 +107,7 @@
                             if (cb) cb();
                         });
                     } catch (err) {
-                        console.warn('Cannot remove object key "' + key + '" from store "' + storeType + '":' + err);
+                        console.log('Cannot remove object key "' + key + '" from store "' + storeType + '":' + err);
                     }
                 }
             };
