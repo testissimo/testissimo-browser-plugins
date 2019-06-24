@@ -1,0 +1,16 @@
+{
+    "addons": {
+        "info@testissimo.io": {
+            "updates": [
+                {
+                    "version": "0.5.1",
+                    "update_link": "https://testissimo.github.io/testissimo-browser-plugins/dist/firefox-auto-update/firefox-0.5.1.xpi"
+                },
+                {
+                    "version": "0.5.2",
+                    "update_link": "https://testissimo.github.io/testissimo-browser-plugins/dist/firefox-auto-update/firefox-0.5.2.xpi"
+                }
+            ]
+        }
+    }
+}

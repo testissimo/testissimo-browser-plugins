@@ -27,7 +27,8 @@ function createFirefoxManifest(cb){
     var ffManifest = require('./firefox_port/manifest.json')
     ffManifest.applications = {
         gecko:{
-            id: 'info@testissimo.io'
+            id: 'info@testissimo.io',
+            update_url: 'https://testissimo.github.io/testissimo-browser-plugins/dist/firefox-auto-update/versions.json'
         }
     };
     delete ffManifest.background.persistent;

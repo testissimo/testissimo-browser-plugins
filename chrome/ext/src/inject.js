@@ -28,9 +28,12 @@
 
     var origins = window.name.replace(WIN_NAME_PREFIX + ':', '').split('|');
     var uiOrigin = origins[0];
-    var topOrigin = origins[1] || origins[0]; // top origin is same as ui origin if not specified
+    var topOrigin = origins[1];
+    var topOriginQueryParams = (origins[2] || '').replace(/^(\?|&)/, '');
     var endpointUrl = uiOrigin === ENDPOINT_ORIGIN_PROD ? ENDPOINT_ORIGIN_PROD : ENDPOINT_ORIGIN_DEV;
-    var agentSrc = endpointUrl + '/testissimo.min.js?agentMode=true&uiMessagingOrigin=' + encodeURIComponent(uiOrigin) + '&parentMessagingOrigin=' + encodeURIComponent(topOrigin);
+    var agentSrc = endpointUrl + '/testissimo.min.js?agentMode=true&uiMessagingOrigin=' + encodeURIComponent(uiOrigin) + '&parentMessagingOrigin=' + encodeURIComponent(topOrigin) + '&' + topOriginQueryParams;
+
+
 
     /*
      * INJECT INIT SCRIPT
