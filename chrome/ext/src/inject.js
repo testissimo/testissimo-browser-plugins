@@ -31,7 +31,7 @@
     var topOrigin = origins[1];
     var topOriginQueryParams = (origins[2] || '').replace(/^(\?|&)/, '');
     var endpointUrl = uiOrigin === ENDPOINT_ORIGIN_PROD ? ENDPOINT_ORIGIN_PROD : ENDPOINT_ORIGIN_DEV;
-    var agentSrc = endpointUrl + '/testissimo.min.js?agentMode=true&uiMessagingOrigin=' + encodeURIComponent(uiOrigin) + '&parentMessagingOrigin=' + encodeURIComponent(topOrigin) + '&' + topOriginQueryParams;
+    var agentSrc = endpointUrl + '/testissimo.min.js#/?agentMode=true&uiMessagingOrigin=' + encodeURIComponent(uiOrigin) + '&parentMessagingOrigin=' + encodeURIComponent(topOrigin) + '&' + topOriginQueryParams;
 
 
 
