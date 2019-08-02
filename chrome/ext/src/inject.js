@@ -141,11 +141,13 @@
             if (event.source !== window) return;
 
             var msgData = event.data;
-            if (msgData.type === 'testissimoHeadlessRunEnded') return browser.runtime.sendMessage({
-                method: 'close'
-            });
+            
+            // closing browser is headless supervisor job now
+            // if (msgData.type === 'testissimoHeadlessRunEnded') return browser.runtime.sendMessage({
+            //     method: 'close'
+            // });
 
-            else if (msgData.type === 'testissimoExtCommandRequest') return browser.runtime.sendMessage({
+            if (msgData.type === 'testissimoExtCommandRequest') return browser.runtime.sendMessage({
                 method: 'execCommand',
                 cmdName: msgData.cmdName,
                 cmdOpts: msgData.cmdOpts
