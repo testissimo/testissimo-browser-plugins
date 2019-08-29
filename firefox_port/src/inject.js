@@ -1,11 +1,11 @@
 (function () {
 
     var APP_URLS = [
-        'http://app.testissimo.io/http', // first is default url for new tab creation
-        'https://app.testissimo.io/https',
+        'http://browser.testissimo.io', // first is default url for new tab creation
+        'https://app.testissimo.io',
 
-        'http://dev.testissimo.io:8080/http',
-        'https://dev.testissimo.io:2000/https',
+        'http://browser-dev.testissimo.io:8080',
+        'https://app-dev.testissimo.io:8443',
     ];
 
     function isAppUrl(url) {
@@ -21,7 +21,7 @@
 
     var WIN_NAME_PREFIX = 'testissimo-testedapp-frame';
     var ENDPOINT_ORIGIN_PROD = 'https://app.testissimo.io';
-    var ENDPOINT_ORIGIN_DEV = 'https://dev.testissimo.io:2000';
+    var ENDPOINT_ORIGIN_DEV = 'https://app-dev.testissimo.io:8443';
 
     window.name = window.name || '';
     if (window.name.indexOf(WIN_NAME_PREFIX) !== 0) return;
@@ -31,7 +31,7 @@
     var topOrigin = origins[1];
     var topOriginQueryParams = (origins[2] || '').replace(/^(\?|&)/, '');
     var endpointUrl = uiOrigin === ENDPOINT_ORIGIN_PROD ? ENDPOINT_ORIGIN_PROD : ENDPOINT_ORIGIN_DEV;
-    var agentSrc = endpointUrl + '/testissimo.min.js?agentMode=true&uiMessagingOrigin=' + encodeURIComponent(uiOrigin) + '&parentMessagingOrigin=' + encodeURIComponent(topOrigin) + '&' + topOriginQueryParams;
+    var agentSrc = endpointUrl + '/testissimo.min.js#/?agentMode=true&uiMessagingOrigin=' + encodeURIComponent(uiOrigin) + '&parentMessagingOrigin=' + encodeURIComponent(topOrigin) + '&' + topOriginQueryParams;
 
 
 
@@ -141,11 +141,13 @@
             if (event.source !== window) return;
 
             var msgData = event.data;
-            if (msgData.type === 'testissimoHeadlessRunEnded') return browser.runtime.sendMessage({
-                method: 'close'
-            });
+            
+            // closing browser is headless supervisor job now
+            // if (msgData.type === 'testissimoHeadlessRunEnded') return browser.runtime.sendMessage({
+            //     method: 'close'
+            // });
 
-            else if (msgData.type === 'testissimoExtCommandRequest') return browser.runtime.sendMessage({
+            if (msgData.type === 'testissimoExtCommandRequest') return browser.runtime.sendMessage({
                 method: 'execCommand',
                 cmdName: msgData.cmdName,
                 cmdOpts: msgData.cmdOpts
@@ -326,12 +328,14 @@
         window.testissimoBrowserPlugin = function (testissimo, Testissimo) {
             testissimo.localStore = createStoreMethods('local');
             testissimo.sessionStore = createStoreMethods('session');
-            testissimo.on('headlessRunEnded', function () {
-                console.log('Headless run ended, closing tab...');
-                window.postMessage({
-                    type: 'testissimoHeadlessRunEnded'
-                }, window.location.origin);
-            });
+
+            // closing browser is headless supervisor job now
+            // testissimo.on('headlessRunEnded', function () {
+            //     console.log('Headless run ended, closing tab...');
+            //     window.postMessage({
+            //         type: 'testissimoHeadlessRunEnded'
+            //     }, window.location.origin);
+            // });
 
             testissimo.download = function (url, cb) {
                 // url must be absolute, because packground page cannot resolve it

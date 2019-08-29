@@ -16,11 +16,11 @@ var ICONS_INACTIVE = {
 };
 
 var APP_URLS = [
-    'http://app.testissimo.io/http', // first is default url for new tab creation
-    'https://app.testissimo.io/https',
+    'http://browser.testissimo.io', // first is default url for new tab creation
+    'https://app.testissimo.io',
 
-    'http://dev.testissimo.io:8080/http',
-    'https://dev.testissimo.io:2000/https',
+    'http://browser-dev.testissimo.io:8080',
+    'https://app-dev.testissimo.io:8443',
 ];
 
 var APP_CLIENT_SCRIPT = '/testissimo.min.js';

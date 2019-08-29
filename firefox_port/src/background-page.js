@@ -16,11 +16,11 @@ var ICONS_INACTIVE = {
 };
 
 var APP_URLS = [
-    'http://app.testissimo.io/http', // first is default url for new tab creation
-    'https://app.testissimo.io/https',
+    'http://browser.testissimo.io', // first is default url for new tab creation
+    'https://app.testissimo.io',
 
-    'http://dev.testissimo.io:8080/http',
-    'https://dev.testissimo.io:2000/https',
+    'http://browser-dev.testissimo.io:8080',
+    'https://app-dev.testissimo.io:8443',
 ];
 
 var APP_CLIENT_SCRIPT = '/testissimo.min.js';
@@ -30,6 +30,7 @@ var state = {
     tabIds: (localStorage.getItem('state:tabIds') || '').split('|').map(function (id) {
         return parseInt(id);
     }),
+    headless: false,
     active: !!localStorage.getItem('state:active'),
     reset: function () {
         this.tabIds = [];
@@ -58,6 +59,10 @@ var state = {
 function isAppUrl(url) {
     url = (url || '').replace(/\?.*$/, '').replace(/#.*$/, '').replace(/\/$/, ''); // replace query string, hash, last slash
     return APP_URLS.indexOf(url) > -1;
+}
+
+function isHeadlessUrl(url){
+    return url.indexOf('?headlessKey=') > -1;
 }
 
 function isAppClientUrl(url) {
@@ -103,7 +108,10 @@ function searchTestTabs(cb) {
         state.reset();
 
         for (var i = 0; i < appTabs.length; i++) {
-            if (isAppUrl(appTabs[i].url)) state.setActive(appTabs[i].id);
+            if (isAppUrl(appTabs[i].url)) {
+                if(isHeadlessUrl(appTabs[i].url)) state.headless = true;
+                state.setActive(appTabs[i].id);
+            }
         }
 
         setActiveIcon();
@@ -118,7 +126,7 @@ setTimeout(searchTestTabs, 1000);
 // close all testissimo tabs and create new tab, if first install
 browser.runtime.onInstalled.addListener(function (detail) {
     if (detail.reason === 'install') searchTestTabs(function () {
-        browser.tabs.remove(state.tabIds, function () {
+        if(!state.headless) browser.tabs.remove(state.tabIds, function () {
             browser.tabs.create({
                 active: true,
                 url: APP_URLS[0]
