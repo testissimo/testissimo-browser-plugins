@@ -23,8 +23,13 @@
     var ENDPOINT_ORIGIN_PROD = 'https://app.testissimo.io';
     var ENDPOINT_ORIGIN_DEV = 'https://app-dev.testissimo.io:8443';
 
+    var browser = chrome || browser;
     window.name = window.name || '';
-    if (window.name.indexOf(WIN_NAME_PREFIX) !== 0) return;
+    if(window.name === 'testissimo-ui') {
+        initMessaging();
+        return injectHelpers();
+    }
+    else if(window.name.indexOf(WIN_NAME_PREFIX) !== 0) return;
 
     var origins = window.name.replace(WIN_NAME_PREFIX + ':', '').split('|');
     var uiOrigin = origins[0];
@@ -32,7 +37,6 @@
     var topOriginQueryParams = (origins[2] || '').replace(/^(\?|&)/, '');
     var endpointUrl = uiOrigin === ENDPOINT_ORIGIN_PROD ? ENDPOINT_ORIGIN_PROD : ENDPOINT_ORIGIN_DEV;
     var agentSrc = endpointUrl + '/testissimo.min.js#/?agentMode=true&uiMessagingOrigin=' + encodeURIComponent(uiOrigin) + '&parentMessagingOrigin=' + encodeURIComponent(topOrigin) + '&' + topOriginQueryParams;
-
 
 
     /*
@@ -55,7 +59,6 @@
     /*
      * INJECT TESTISSIMO
      */
-    var browser = chrome || browser;
     browser.runtime.sendMessage({
         method: 'decideInject'
     }, function (response) {
@@ -125,6 +128,27 @@
          * MESSAGING
          */
 
+        initMessaging(store);
+
+        /*
+         * INJECT SCRIPTS
+         */
+
+        // testissimo plugin helpers
+        injectHelpers();
+
+        // testissimo script
+        injectScript('testissimo-config', agentSrc);
+    });
+
+    function injectHelpers(){
+        var storeScript = '(' + listenToWebPage.toString() + ')();';
+
+        // extension store
+        injectScript('testissimo-extension-api', null, storeScript);
+    }
+
+    function initMessaging(store){
         function createEventCallback(messageId, type) {
             return function () {
                 var args = Array.prototype.slice.call(arguments);
@@ -162,6 +186,7 @@
                 createEventCallback(msgData.id, 'testissimoExtDownloadResponse')(response.status, response.headers, response.content);
             });
 
+            if (!store) return;
             if (msgData.type !== 'testissimoExtStoreRequest') return;
 
             var cb = msgData.needResponse ? createEventCallback(msgData.id, 'testissimoExtStoreResponse') : null;
@@ -171,19 +196,7 @@
             // execute store method
             store[msgData.storeType][msgData.storeMethod].apply(store[msgData.storeType], args);
         }, false);
-
-        /*
-         * INJECT SCRIPTS
-         */
-
-        var storeScript = '(' + listenToWebPage.toString() + ')();';
-
-        // extension store
-        injectScript('testissimo-extension-api', null, storeScript);
-
-        // testissimo script
-        injectScript('testissimo-config', agentSrc);
-    });
+    }
 
     function injectScript(id, src, textContent) {
         if (arguments.length === 1) {
@@ -210,7 +223,7 @@
         }
     }
 
-    var listenToWebPage = function () {
+    function listenToWebPage() {
         /*
          * CALL EXTENSION STORE METHODS
          */
