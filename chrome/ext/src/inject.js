@@ -48,12 +48,15 @@
         "w.testissimoPluginEnabled = true; " +
         "if(w.testissimoPrePatched) return;" + // already pre-patched
         "w.testissimoPrePatched=true;" +
-        "['setInterval','clearInterval','setTimeout','clearTimeout','requestAnimationFrame','cancelAnimationFrame','prompt','confirm','alert','fetch'].forEach(function(p){" +
-            "var pt='testissimo_'+p,pg=p+'Getter';w[pt]=w[p].bind(w);w[p]=function testissimoNative(){return (w.testissimo&&w.testissimo[pg])?w.testissimo[pg]().apply(this,arguments):w[pt].apply(this,arguments);};" +
-        "});" +
-        "[['History','pushState'],['History','replaceState'],['XMLHttpRequest','open'],['XMLHttpRequest','abort'],['EventTarget','addEventListener',true],['EventTarget','removeEventListener',true],['Promise','constructor'],['Promise','catch'],['Promise','then'],['Promise','finally']].forEach(function(p){" +
-            "var tp='testissimo_',n=p[0]+'_'+p[1],pg=n+'Getter',pq=tp+p[0]+'_queue';w[pq]=p[2]?[]:null;w[tp+n]=w[p[0]].prototype[p[1]];w[p[0]].prototype[p[1]]=function testissimoNative(){if(w[pq]) w[pq].push({a:arguments,c:this,m:p[1]}); return (w.testissimo&&w.testissimo[pg])?w.testissimo[pg]().apply(this,arguments):w[tp+n].apply(this,arguments);};"+
-        "});" +
+        "[['setInterval',1],['clearInterval',1],['setTimeout',1],['clearTimeout',1],['requestAnimationFrame',1],['cancelAnimationFrame',1],['prompt',1],['confirm',1],['alert',1],['fetch',1],['Promise',1,0,1],[['Promise','catch'],1],[['Promise','then'],1],[['Promise','finally'],1],"+
+        "[['History','pushState'],1],[['History','replaceState'],1],[['XMLHttpRequest','open'],1],[['XMLHttpRequest','abort'],1],[['EventTarget','addEventListener'],1,1],[['EventTarget','removeEventListener'],1,1]].forEach(function(s){"+
+            "var n=s[0],na=Array.isArray(n),dp=na&&n[2],p=na?n[0]:n,pn=na?n[1]:'',h={},pb=p+((pn&&!dp)?'.prototype.'+pn:(dp?('.'+pn):''))+':',wq='testissimo_objproxy:apply:queue';"+
+            "if(s[1])h.apply=function(t,ta,al){if(!w.testissimo&&s[2]){w[wq]=w[wq]||[];w[wq].push({a:al,c:t,m:pn||n});}return(w.testissimo&&w.testissimo.objProxy[pb+'apply'])?w.testissimo.objProxy[pb+'apply'](t,ta,al):t.apply(ta,al);};"+
+            "if(s[3])h.construct=function(t,al,nt){return(w.testissimo&&w.testissimo.objProxy[pb+'construct'])?w.testissimo.objProxy[pb+'construct'](t,al,nt):new t(...al)};"+
+            "if(!pn)w[p]=new Proxy(w[p],h);"+
+            "else if(dp)w[p][pn]=new Proxy(w[p][pn],h);"+
+            "else w[p].prototype[pn]=new Proxy(w[p].prototype[pn],h);"+
+        "});"+
         "})(window);");
 
     /*

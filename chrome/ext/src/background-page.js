@@ -375,29 +375,3 @@ function createFileObject(content, fileName, options) {
         return fakeFile;
     }
 };
-
-/*
- * SUPERVISOR - DRAFT
- */
-
-// function RunSupervisor(runId, tabId){
-//   this.runId = runId;
-//   this.tabId = tabId;
-//   this.state = 'running';
-//   this.scopes = {};
-
-//   apiKey, 
-
-//   // start watcher
-//   this.watchState();
-// }
-
-// RunSupervisor.prototype.watchState = function(){
-//   this.watcher = setInterval(function(){
-
-//   }, 10000);
-// }
-
-// RunSupervisor.prototype.destroy = function(){
-//   if(this.watcher) clearInterval(this.watcher);
-// };

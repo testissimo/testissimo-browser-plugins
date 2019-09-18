@@ -17,6 +17,10 @@
                 {
                     "version": "0.5.4",
                     "update_link": "https://testissimo.github.io/testissimo-browser-plugins/dist/firefox-auto-update/firefox-0.5.4.xpi"
+                },
+                {
+                    "version": "0.5.5",
+                    "update_link": "https://testissimo.github.io/testissimo-browser-plugins/dist/firefox-auto-update/firefox-0.5.5.xpi"
                 }
             ]
         }
